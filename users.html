@@ -118,17 +118,16 @@
 
 
 <script type="text/javascript">
-    let renderBoolean = function (data) {
+    function renderBoolean(data) {
         return (data === true) ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>';
-    };
+    }
 
-    let renderActions = function (data) {
+    function renderActions(data) {
         let email = "'" + data.email + "'";
-        console.log(email);
         return '<button type="button" class="btn btn-danger btn-sm" onclick="banUser(' + email + ')">Ban</button>' +
             '<button type="button" class="btn btn-success btn-sm" onclick="verifyUser(' + email + ')">Verify</button>'
 
-    };
+    }
 
     function verifyUser(email) {
         $.post("http://localhost:5000/users/" + email + "/verified");
