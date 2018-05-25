@@ -3,6 +3,8 @@ import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 app = Flask(__name__)
 CORS(app)
@@ -31,10 +33,30 @@ class User(db.Model):
                 'verified': self.verified_account}
 
 
+class Report(db.Model):
+    reporter = db.Column(db.String(255), ForeignKey("user.email"), primary_key=True)
+    reported = db.Column(db.String(255), ForeignKey("user.email"), primary_key=True)
+
+    def toJSON(self):
+        return {'reporter': self.reporter,
+                'reported': self.reported}
+
+
 @app.route('/users')
 def get_users():
     users = User.query.all()
     return jsonify([user.toJSON() for user in users])
+
+
+@app.route('/reported_users')
+def get_reported_users():
+    reports = []
+    for report in Report.query.all():
+        dictionary = report.toJSON()
+        dictionary['enabled'] = User.query.filter_by(email=report.reported).first().enabled
+        reports.append(dictionary)
+
+    return jsonify(reports)
 
 
 @app.route('/users/<email>/verified', methods=['POST'])
