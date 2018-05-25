@@ -1,11 +1,18 @@
+import os
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 CORS(app)
-# DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER,pw=POSTGRES_PW,url=POSTGRES_URL,db=POSTGRES_DB)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://vagrant:vagrant@localhost:5432/vagrant'
+POSTGRES_USER = os.environ['POSTGRES_USER']
+POSTGRES_PW = os.environ['POSTGRES_PW']
+POSTGRES_URL = os.environ['POSTGRES_URL']
+POSTGRES_DB = os.environ['POSTGRES_DB']
+DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER, pw=POSTGRES_PW, url=POSTGRES_URL,
+                                                               db=POSTGRES_DB)
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 db = SQLAlchemy(app)
 
 
@@ -22,11 +29,6 @@ class User(db.Model):
                 'surname': self.surname,
                 'enabled': self.enabled,
                 'verified': self.verified_account}
-
-
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
 
 
 @app.route('/users')
@@ -47,6 +49,14 @@ def verify_user(email):
 def ban_user(email):
     user = User.query.filter_by(email=email).first()
     user.enabled = False
+    db.session.commit()
+    return jsonify(''), 204
+
+
+@app.route('/users/<email>/banned', methods=['DELETE'])
+def unban_user(email):
+    user = User.query.filter_by(email=email).first()
+    user.enabled = True
     db.session.commit()
     return jsonify(''), 204
 

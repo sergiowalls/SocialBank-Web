@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Sufee Admin - HTML5 Admin Template</title>
+    <title>SB Admin</title>
     <meta name="description" content="SocialBank Admin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -124,29 +124,32 @@
 
     function renderActions(data) {
         let email = "'" + data.email + "'";
-        return '<button type="button" class="btn btn-danger btn-sm" onclick="banUser(' + email + ')">Ban</button>' +
-            '<button type="button" class="btn btn-success btn-sm" onclick="verifyUser(' + email + ')">Verify</button>'
+        let banButton = '<button type="button" class="btn btn-danger btn-sm" onclick="banUser(' + email + ')">Ban</button>';
+        let unbanButton = '<button type="button" class="btn btn-warning btn-sm" onclick="unbanUser(' + email + ')">Unban</button>';
+        let verifyButton = '<button type="button" class="btn btn-success btn-sm" onclick="verifyUser(' + email + ')">Verify</button>';
+        return data.enabled === true ? banButton + verifyButton : unbanButton + verifyButton;
 
+    }
+
+    function refreshUserTable() {
+        $.get("http://localhost:5000/users", function (users) {
+            let $usersTable = $('#usersTable').DataTable();
+            $usersTable.clear();
+            $usersTable.rows.add(users);
+            $usersTable.draw();
+        });
     }
 
     function verifyUser(email) {
-        $.post("http://localhost:5000/users/" + email + "/verified");
-        $.get("http://localhost:5000/users", function (users) {
-            let $usersTable = $('#usersTable').DataTable();
-            $usersTable.clear();
-            $usersTable.rows.add(users);
-            $usersTable.draw();
-        });
+        $.post("http://localhost:5000/users/" + email + "/verified", refreshUserTable);
     }
 
     function banUser(email) {
-        $.post("http://localhost:5000/users/" + email + "/banned");
-        $.get("http://localhost:5000/users", function (users) {
-            let $usersTable = $('#usersTable').DataTable();
-            $usersTable.clear();
-            $usersTable.rows.add(users);
-            $usersTable.draw();
-        });
+        $.post("http://localhost:5000/users/" + email + "/banned", refreshUserTable);
+    }
+
+    function unbanUser(email) {
+        $.ajax({url: "http://localhost:5000/users/" + email + "/banned", type: 'DELETE', success: refreshUserTable});
     }
 
     function getUsers() {
