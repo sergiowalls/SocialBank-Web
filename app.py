@@ -4,7 +4,6 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
 
 app = Flask(__name__)
 CORS(app)
@@ -104,4 +103,4 @@ def unban_user(email):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host=os.environ['HOST'], port=os.environ['PORT'], threaded=True)
