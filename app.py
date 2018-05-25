@@ -42,6 +42,15 @@ class Report(db.Model):
                 'reported': self.reported}
 
 
+class RequestAccountVerification(db.Model):
+    user = db.Column(db.String(255), ForeignKey("user.email"), primary_key=True)
+    message = db.Column(db.String(255))
+
+    def toJSON(self):
+        return {'user': self.user,
+                'message': self.message}
+
+
 @app.route('/users')
 def get_users():
     users = User.query.all()
@@ -57,6 +66,17 @@ def get_reported_users():
         reports.append(dictionary)
 
     return jsonify(reports)
+
+
+@app.route('/requested_verifications')
+def get_requested_verifications():
+    requests = []
+    for request in RequestAccountVerification.query.all():
+        dictionary = request.toJSON()
+        dictionary['verified'] = User.query.filter_by(email=request.user).first().verified_account
+        requests.append(dictionary)
+
+    return jsonify(requests)
 
 
 @app.route('/users/<email>/verified', methods=['POST'])
