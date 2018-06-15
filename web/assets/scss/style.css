@@ -599,16 +599,16 @@
         font-weight: 500;
         color: #949CA0;
         text-transform: uppercase; }
-  .social-box.facebook i {
+  .social-box.users i {
     color: #fff;
     background: #3b5998; }
-  .social-box.twitter i {
+  .social-box.verifications i {
     color: #fff;
     background: #00aced; }
   .social-box.linkedin i {
     color: #fff;
     background: #4875b4; }
-  .social-box.google-plus i {
+  .social-box.reports i {
     color: #fff;
     background: #d34836; }
 
@@ -1640,15 +1640,15 @@ header .form-inline {
 
 .social-button {
   padding: 0 30px; }
-  .social-button .facebook {
+  .social-button .users {
     background: #3b5998;
     color: #fff; }
-    .social-button .facebook:hover {
+    .social-button .users:hover {
       background: #344e86; }
-  .social-button .twitter {
+  .social-button .verifications {
     background: #00aced;
     color: #fff; }
-    .social-button .twitter:hover {
+    .social-button .verifications:hover {
       background: #0099d4; }
 
 .social-button i {
